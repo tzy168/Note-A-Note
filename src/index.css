@@ -3,18 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #f59e0b;      /* 柔和黄色 */
-  --color-secondary: #f3f4f6;    /* 浅灰色 */
-  --color-background: #ffffff;   /* 白色背景 */
-  --color-surface: #f9fafb;     /* 表面色 */
-  --color-text: #1f2937;        /* 文字色 */
-  --radius-sm: 0.375rem;        /* 小圆角 */
-  --radius-md: 0.5rem;           /* 中圆角 */
-  --radius-lg: 0.75rem;          /* 大圆角 */
-  --radius-xl: 1rem;             /* 超大圆角 */
-  --glass-bg: rgba(255, 255, 255, 0.1);  /* 毛玻璃背景色 */
-  --glass-border: rgba(255, 255, 255, 0.2);  /* 毛玻璃边框色 */
-  --glass-blur: 12px;            /* 模糊程度 */
+  --color-primary: #f59e0b; /* 柔和黄色 */
+  --color-secondary: #f3f4f6; /* 浅灰色 */
+  --color-background: #ffffff; /* 白色背景 */
+  --color-surface: #f9fafb; /* 表面色 */
+  --color-text: #1f2937; /* 文字色 */
+  --radius-sm: 0.375rem; /* 小圆角 */
+  --radius-md: 0.5rem; /* 中圆角 */
+  --radius-lg: 0.75rem; /* 大圆角 */
+  --radius-xl: 1rem; /* 超大圆角 */
+  --glass-bg: rgba(255, 255, 255, 0.1); /* 毛玻璃背景色 */
+  --glass-border: rgba(255, 255, 255, 0.2); /* 毛玻璃边框色 */
+  --glass-blur: 12px; /* 模糊程度 */
 
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -30,12 +30,12 @@
   .glass {
     @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-xl;
   }
-  
+
   .glass-hover {
-    @apply hover:bg-white/15 transition-all duration-300;
+    @apply hover:opacity-70 transition-all duration-300;
   }
 
   .btn-primary {
-    @apply bg-primary text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity;
+    @apply bg-primary px-4 py-2 rounded-lg hover:opacity-90 transition-opacity;
   }
 }

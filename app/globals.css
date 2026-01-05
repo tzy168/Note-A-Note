@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+:root {
+  /* === 原来的主题色 & 设计变量(完全复刻) === */
+  --color-primary: #f59e0b;
+  /* 柔和黄色 */
+  --color-secondary: #f3f4f6;
+  /* 浅灰色 */
+  --color-background: #ffffff;
+  /* 白色背景 */
+  --color-surface: #f9fafb;
+  /* 表面色 */
+  --color-text: #1f2937;
+  /* 文字色 */
+
+  --radius-sm: 0.375rem;
+  /* 小圆角 */
+  --radius-md: 0.5rem;
+  /* 中圆角 */
+  --radius-lg: 0.75rem;
+  /* 大圆角 */
+  --radius-xl: 1rem;
+  /* 超大圆角 */
+
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  /* 毛玻璃背景色 */
+  --glass-border: rgba(255, 255, 255, 0.2);
+  /* 毛玻璃边框色 */
+  --glass-blur: 12px;
+  /* 模糊程度 */
+
+  /* === Next 模板里本来就有的变量,顺便对齐一下 === */
+  --background: #ffffff;
+  --foreground: #171717;
+
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* === 颜色主题变体 === */
+:root.amber {
+  --color-primary: #f59e0b;
+}
+
+:root.blue {
+  --color-primary: #3b82f6;
+}
+
+:root.emerald {
+  --color-primary: #10b981;
+}
+
+:root.purple {
+  --color-primary: #a855f7;
+}
+
+/* 深色模式（如果后面需要可以再精调） */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+/* === Tailwind v4 的主题映射：还原 bg-primary / bg-secondary 等类 === */
+@theme inline {
+  /* 颜色：让 bg-primary / text-text 等类可用 */
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-text: var(--color-text);
+
+  /* 圆角：让 rounded-sm / md / lg / xl 使用你原来的值 */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+
+  /* 字体：用你原来 index.css 的 sans 栈 */
+  --font-sans: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+/* 全局 body 样式，跟原项目对齐 */
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+
+/* === 复刻你原来的组件工具类（glass / glass-hover / btn-primary） === */
+@layer components {
+  .glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-xl;
+  }
+
+  .glass-hover {
+    @apply hover:opacity-70 transition-all duration-300;
+  }
+
+  .btn-primary {
+    @apply bg-primary px-4 py-2 rounded-lg hover:opacity-90 transition-opacity;
+  }
+}

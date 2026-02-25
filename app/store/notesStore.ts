@@ -2,14 +2,14 @@
 
 import { create } from "zustand"
 import type { Note } from "../types/note"
-import { mockNotes } from "../types/note"
+import { ListNotesParams, noteService } from "@/services/note"
 
 interface NotesState {
 	notes: Note[]
 	loading: boolean
-	fetchNotes: () => Promise<void>
+	fetchNotes: (params?: ListNotesParams) => Promise<void>
 	createNote: (title: string, content: string, folderId?: string) => Promise<Note | null>
-	updateNote: (id: string, title: string, content: string) => Promise<void>
+	updateNote: (id: string, user_id: string, title: string, content: string) => Promise<void>
 	deleteNote: (id: string) => Promise<void>
 	getNote: (id: string) => Promise<Note | null>
 }
@@ -18,16 +18,15 @@ export const useNotesStore = create<NotesState>((set, get) => ({
 	notes: [],
 	loading: false,
 
-	fetchNotes: async () => {
+	fetchNotes: async (params?: ListNotesParams) => {
 		set({ loading: true })
 		try {
-			// Mock: 模拟异步获取笔记
-			await new Promise((resolve) => setTimeout(resolve, 300))
+			const res = await noteService.listNotes(params)
 
 			// 从 localStorage 读取笔记（如果有的话），否则使用 mock 数据
 			const storedNotes = typeof window !== "undefined" ? localStorage.getItem("mock_notes") : null
 
-			const notes = storedNotes ? JSON.parse(storedNotes) : [...mockNotes]
+			const notes = storedNotes ? JSON.parse(storedNotes) : res.notes
 			set({ notes })
 		} catch (error) {
 			console.error("Error fetching notes:", error)
@@ -66,13 +65,18 @@ export const useNotesStore = create<NotesState>((set, get) => ({
 		}
 	},
 
-	updateNote: async (id, title, content) => {
+	updateNote: async (id, user_id, title, content) => {
 		try {
 			// Mock: 模拟更新笔记
-			await new Promise((resolve) => setTimeout(resolve, 200))
+			await noteService.updateNote({
+				id,
+				user_id,
+				title,
+				content,
+			})
 
 			const updatedNotes = get().notes.map((n) =>
-				n.id === id ? { ...n, title, content, updated_at: new Date().toISOString() } : n
+				n.id === id ? { ...n, title, content, updated_at: new Date().toISOString() } : n,
 			)
 
 			set({ notes: updatedNotes })

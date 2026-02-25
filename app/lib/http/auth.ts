@@ -36,4 +36,29 @@ export const authApi = {
 		tokenStorage.setTokens(tokens)
 		return tokens
 	},
+
+	async signUp<TBody = Record<string, unknown>>(url: string, body: TBody) {
+		return http.post<Record<string, unknown>, TBody>(url, body, {
+			skipAuth: true,
+			skipRefresh: true,
+		})
+	},
+
+	async sendCode<TBody = Record<string, unknown>>(url: string, body: TBody) {
+		return http.post<Record<string, unknown>, TBody>(url, body, {
+			skipAuth: true,
+			skipRefresh: true,
+		})
+	},
+
+	async logout<TBody = Record<string, unknown>>(url: string, body: TBody) {
+		try {
+			return await http.post<Record<string, unknown>, TBody>(url, body, {
+				skipAuth: false,
+				skipRefresh: true,
+			})
+		} finally {
+			tokenStorage.clearTokens()
+		}
+	},
 }

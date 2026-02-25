@@ -2,7 +2,16 @@
 
 import { create } from "zustand"
 import type { Note } from "../types/note"
-import { ListNotesParams, noteService } from "@/services/note"
+import { ListNotesParams, NoteItem, noteService } from "@/services/note"
+
+const toNote = (item: NoteItem): Note => ({
+	id: item.id,
+	title: item.title,
+	content: item.content,
+	folder_id: null,
+	updated_at: item.updated_at,
+	user_id: item.user_id,
+})
 
 interface NotesState {
 	notes: Note[]
@@ -23,10 +32,7 @@ export const useNotesStore = create<NotesState>((set, get) => ({
 		try {
 			const res = await noteService.listNotes(params)
 
-			// 从 localStorage 读取笔记（如果有的话），否则使用 mock 数据
-			const storedNotes = typeof window !== "undefined" ? localStorage.getItem("mock_notes") : null
-
-			const notes = storedNotes ? JSON.parse(storedNotes) : res.notes
+			const notes = res.notes.map((note) => toNote(note))
 			set({ notes })
 		} catch (error) {
 			console.error("Error fetching notes:", error)
@@ -38,25 +44,13 @@ export const useNotesStore = create<NotesState>((set, get) => ({
 
 	createNote: async (title, content, folderId) => {
 		try {
-			// Mock: 模拟创建笔记
-			await new Promise((resolve) => setTimeout(resolve, 200))
-
-			const newNote: Note = {
-				id: `note-${Date.now()}`,
+			const created = await noteService.createNote({
 				title,
 				content,
-				folder_id: folderId || null,
-				updated_at: new Date().toISOString(),
-				user_id: "mock-user-001",
-			}
-
+			})
+			const newNote = { ...toNote(created), folder_id: folderId || null }
 			const updatedNotes = [newNote, ...get().notes]
 			set({ notes: updatedNotes })
-
-			// 保存到 localStorage
-			if (typeof window !== "undefined") {
-				localStorage.setItem("mock_notes", JSON.stringify(updatedNotes))
-			}
 
 			return newNote
 		} catch (error) {
@@ -67,24 +61,17 @@ export const useNotesStore = create<NotesState>((set, get) => ({
 
 	updateNote: async (id, user_id, title, content) => {
 		try {
-			// Mock: 模拟更新笔记
-			await noteService.updateNote({
+			const updated = await noteService.updateNote({
 				id,
 				user_id,
 				title,
 				content,
 			})
 
-			const updatedNotes = get().notes.map((n) =>
-				n.id === id ? { ...n, title, content, updated_at: new Date().toISOString() } : n,
-			)
+			const updatedNote = toNote(updated)
+			const updatedNotes = get().notes.map((n) => (n.id === id ? { ...n, ...updatedNote } : n))
 
 			set({ notes: updatedNotes })
-
-			// 保存到 localStorage
-			if (typeof window !== "undefined") {
-				localStorage.setItem("mock_notes", JSON.stringify(updatedNotes))
-			}
 		} catch (error) {
 			console.error("Error updating note:", error)
 		}
@@ -92,16 +79,10 @@ export const useNotesStore = create<NotesState>((set, get) => ({
 
 	deleteNote: async (id) => {
 		try {
-			// Mock: 模拟删除笔记
-			await new Promise((resolve) => setTimeout(resolve, 200))
+			await noteService.deleteNote({ id })
 
 			const updatedNotes = get().notes.filter((n) => n.id !== id)
 			set({ notes: updatedNotes })
-
-			// 保存到 localStorage
-			if (typeof window !== "undefined") {
-				localStorage.setItem("mock_notes", JSON.stringify(updatedNotes))
-			}
 		} catch (error) {
 			console.error("Error deleting note:", error)
 		}
@@ -112,17 +93,8 @@ export const useNotesStore = create<NotesState>((set, get) => ({
 		if (existingNote) return existingNote
 
 		try {
-			// Mock: 如果内存中没有，尝试从 localStorage 获取
-			await new Promise((resolve) => setTimeout(resolve, 100))
-
-			const storedNotes = typeof window !== "undefined" ? localStorage.getItem("mock_notes") : null
-
-			if (storedNotes) {
-				const notes = JSON.parse(storedNotes)
-				return notes.find((n: Note) => n.id === id) || null
-			}
-
-			return null
+			const note = await noteService.getNote(id)
+			return toNote(note)
 		} catch (error) {
 			console.error("Error getting note:", error)
 			return null

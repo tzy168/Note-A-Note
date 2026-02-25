@@ -38,7 +38,7 @@ const defaultMapRefreshResponse = (response: RefreshResponse): RefreshResult => 
 	return { accessToken, refreshToken }
 }
 
-const defaultRefreshPayload = (refreshToken?: string) => ({ refreshToken })
+const defaultRefreshPayload = (refreshToken?: string) => ({ refresh_token: refreshToken })
 
 export const createHttpClient = (options: HttpClientOptions = {}) => {
 	const instance = axios.create({
